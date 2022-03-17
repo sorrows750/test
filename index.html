@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>React</title>
+    <script src="https://unpkg.com/react@17/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <style>
+        @keyframes shake {
+            0% {
+                transform: translate(1px, 1px) rotate(0deg);
+            }
+
+            10% {
+                transform: translate(-1px, -2px) rotate(-1deg);
+            }
+
+            20% {
+                transform: translate(-3px, 0px) rotate(1deg);
+            }
+
+            30% {
+                transform: translate(3px, 2px) rotate(0deg);
+            }
+
+            40% {
+                transform: translate(1px, -1px) rotate(1deg);
+            }
+
+            50% {
+                transform: translate(-1px, 2px) rotate(-1deg);
+            }
+
+            60% {
+                transform: translate(-3px, 1px) rotate(0deg);
+            }
+
+            70% {
+                transform: translate(3px, 1px) rotate(-1deg);
+            }
+
+            80% {
+                transform: translate(-1px, -1px) rotate(1deg);
+            }
+
+            90% {
+                transform: translate(1px, 2px) rotate(0deg);
+            }
+
+            100% {
+                transform: translate(1px, -2px) rotate(-1deg);
+            }
+        }
+
+        #app{
+            text-align: center;
+        }
+
+        .won{
+            font-size: 74px;
+            color: green;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app"></div>
+    <script type="text/babel">
+        const color = [
+            'Red', 'Orange', 'Yellow', 'Green', 'Cyan', 'Blue', 'Indigo', 'Violet', 'Purple', 'Magenta', 'Pink', 'Brown', 'White', 'Gray', 'Black'
+        ]
+
+
+        function App() {
+            var myStyle = {
+                background: "red",
+                height: '20px',
+                width: '20px',
+                marginBottom: '10px',
+                marginLeft: '50%'
+            }
+            const [state, setState] = React.useState({
+                background: "red",
+                response: "",
+                score: 0,
+                hint: function () {
+                    console.log(state.background)
+                    document.getElementById('hint').innerHTML = state.background;
+                }
+            })
+
+
+            function updateResponse(event) {
+                setState({
+                    ...state,
+                    response: event.target.value
+                })
+            }
+
+
+
+            function inputKeyPress(event) {
+                const randomColor = color[Math.floor(Math.random() * color.length)];
+                if (event.key == "Enter") {
+                    const answer = state.response.toString();
+                    if (state.background === answer) {
+                        setState({
+                            ...state,
+                            background: state.background = randomColor.toLowerCase(),
+                            score: state.score += 1,
+                            response: "",
+                            hint: function () {
+                                console.log(state.background)
+                                document.getElementById('hint').innerHTML = `Ans: ${state.background}`;
+                            }
+                        })
+                        document.getElementById('qns').style.background = randomColor;
+                    } else {
+                        document.getElementById('write').style.animation = 'shake 0.5s';
+                        document.getElementById('write').addEventListener('animationend', () => {
+                            document.getElementById('write').style = "";
+                        })
+                        setState({
+                            ...state,
+                            score: state.score -= 1,
+                            response: ""
+                        })
+                    }
+                }
+            }
+
+            if (state.score >= 10){
+                return (
+                    <div className="won">You Won!</div>
+                )
+            }
+
+            return (
+                <div>
+                    <div id="qns" style={myStyle}></div>
+                    <input type="text" id="write" onKeyPress={inputKeyPress} onChange={updateResponse} placeholder="color name" value={state.response} />
+                    <div>Score is: {state.score}</div>
+                    <div id="hint">Hint: <button className="btn" onClick={state.hint}>Get Hint</button> </div>
+                </div>
+
+            )
+        }
+
+        ReactDOM.render(<App />, document.getElementById('app'))
+
+    </script>
+</body>
+
+</html>
